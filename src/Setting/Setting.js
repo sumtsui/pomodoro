@@ -34,12 +34,12 @@ class Setting extends Component {
     return (
       <div className='container setting-page'>
 
-        <span 
+        <a 
           className='back-button'
           onClick={() => history.goBack()}
         >
           Back
-        </span>
+        </a>
         
         <label id='work-length'>
           <h3>Section Length</h3>

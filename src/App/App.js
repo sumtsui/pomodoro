@@ -99,6 +99,12 @@ class App extends Component {
   }
 
   notify = (isWorking) => {
+    const options = {
+      icon: (isWorking) ? 
+        'https://freeiconshop.com/wp-content/uploads/edd/book-open-flat.png'
+        :
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Closed_Book_Icon.svg/1024px-Closed_Book_Icon.svg.png'
+    };
     const msg = (isWorking) ?
       'Time\'s up! New section begins'
       :
@@ -110,14 +116,14 @@ class App extends Component {
     // Let's check whether notification permissions have already been granted
     else if (Notification.permission === "granted") {
       // If it's okay let's create a notification
-      new Notification(msg);
+      new Notification(msg, options);
     }
     // Otherwise, we need to ask the user for permission
     else if (Notification.permission !== "denied") {
       Notification.requestPermission(function (permission) {
         // If the user accepts, let's create a notification
         if (permission === "granted") {
-          new Notification(msg);
+          new Notification(msg, options);
         }
       });
     }
