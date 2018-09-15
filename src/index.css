@@ -1,0 +1,126 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  font-weight: 300
+}
+
+.container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+h1 {
+  font-size: 1.4em;
+  margin-top: 5em;
+  font-weight: 300;
+}
+
+a {
+  text-decoration: none;
+}
+a:visited {
+  color: black;
+}
+
+/* Hide select arrows */
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    text-indent: 1px;
+    text-overflow: '';
+}
+
+.display {
+  text-align: center;
+}
+.count-down {
+  font-size:4.4em;
+  margin-top: .4em;
+}
+
+button {
+  border: 1px solid black;
+  border-radius: 5px;
+  font-size: .8em;
+  margin: 4em 0;
+  padding: .5em 1em;
+}
+button:hover {
+  cursor: pointer;
+}
+button[disabled] {
+  border: 1px solid gray;
+}
+
+.setting-button {
+  margin-top: 8em;
+}
+
+.button-running button {
+  margin-left: 2em;
+  margin-right: 2em;
+}
+
+/* Setting Page */
+.setting-page {
+  padding-top: 6em;
+  width: 70%;
+  margin: auto;
+}
+.back-button {
+  align-self: flex-start;
+  margin-bottom: 3.8em;
+}
+.back-button:hover {
+  cursor: pointer;
+}
+.setting-page label {
+  margin-bottom: 2.4em;
+  width: 100%;
+}
+.setting-page label div {
+  flex: 1 auto  50%;
+  margin-left: 2em;
+}
+.setting-page input {
+  width: 2em;
+}
+.setting-page input,
+.setting-page div span {
+  font-size: 2.4em;
+}
+.setting-page h3 {
+  font-size: 1.4em;
+  font-weight: 300;
+  margin: 0;
+  flex: 1 auto 50%; 
+  text-align: right;
+  margin-right: 1em;
+  align-self: center;
+}
+#work-length,
+#break-length {
+  display: flex;
+  flex-direction: row;
+}
+
+.alert {
+  /* border: 1px solid #DE507A; */
+  border-radius: 5px;
+  background: #D3EDD1;
+}
+.alert p {
+  margin: 1em;
+}
+.alert button {
+  margin: 1em;
+  background: #D3EDD1;
+}
+.alert-action-buttons {
+  display: flex;
+  justify-content: center;
+}
