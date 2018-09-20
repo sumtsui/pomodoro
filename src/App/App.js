@@ -3,7 +3,11 @@ import Display from '../Display/Display';
 import Control from '../Control/Control';
 import Setting from '../Setting/Setting';
 import Finish from '../Finish/Finish';
+// import Sound from '../Sound/Sound';
 import {BrowserRouter, Route, Link, Switch} from 'react-router-dom';
+import tone from '../assets/bright-notification-tone-2.mp3';
+
+const appTitle = 'Study';
 
 class App extends Component {
   
@@ -16,6 +20,7 @@ class App extends Component {
     section: 1,
     intervalId: null,
     isWorking: true,
+    // timeUp: false
   }
 
   componentDidMount() {
@@ -36,16 +41,16 @@ class App extends Component {
 
   // setState() is async!!
   endCurrentCountDown = () => {
-    const {isWorking, section, breakLength, workLength, remaining} = this.state;
+    const {isWorking, section, breakLength, workLength} = this.state;
     this.setState({
       isWorking: !isWorking, // toggle between working and resting
-      paused: false // in case user didn't unpause then press Skip button
+      paused: false, // in case user didn't unpause then press Skip button
+      // timeUp: true
     }, () => {
-      console.log('remaining', remaining === 0);
       this.notify(this.state.isWorking);
       this.setState({
         section: (this.state.isWorking) ? section + 1 : section,
-        remaining: this.state.isWorking ? workLength : breakLength
+        remaining: this.state.isWorking ? workLength : breakLength,
       })
     });
   }
@@ -55,7 +60,8 @@ class App extends Component {
       intervalId: setInterval(this.tick, 1000),
       remaining: this.state.workLength,
       section: 1,
-      isWorking: true
+      isWorking: true,
+      paused: false
     })
   }
 
@@ -99,44 +105,45 @@ class App extends Component {
   }
 
   notify = (isWorking) => {
+    const audio = new Audio(tone);
+    audio.play();
+    let n;
+    document.title = '* ' + appTitle;
     const options = {
-      icon: (isWorking) ? 
-        'https://freeiconshop.com/wp-content/uploads/edd/book-open-flat.png'
-        :
-        'https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Closed_Book_Icon.svg/1024px-Closed_Book_Icon.svg.png'
+      requireInteraction: true,
+      onclick: () => console.log('click')
     };
-    const msg = (isWorking) ?
-      'Time\'s up! New section begins'
-      :
-      'Study section end! Have a break';
-  // Let's check if the browser supports notifications
+    const msg = (isWorking) ? 
+      'Let\'s do it' : 'Take a break';
+  // Check if the browser supports notifications
     if (!("Notification" in window)) {
-      alert("This browser does not support desktop notification");
+      return alert("This browser does not support desktop notification");
     }
     // Let's check whether notification permissions have already been granted
-    else if (Notification.permission === "granted") {
-      // If it's okay let's create a notification
-      new Notification(msg, options);
-    }
-    // Otherwise, we need to ask the user for permission
+    if (Notification.permission === "granted") n = new Notification(msg, options);
+    // Ask the user for permission
     else if (Notification.permission !== "denied") {
       Notification.requestPermission(function (permission) {
-        // If the user accepts, let's create a notification
-        if (permission === "granted") {
-          new Notification(msg, options);
-        }
+        if (permission === "granted") n = new Notification(msg, options);
       });
     }
+    if (n) n.onclose = () => document.title = appTitle;
+  }
+
+  onPlay = () => {
+    this.setState({timeUp: false})
   }
 
   render() {
-    const { section, remaining, running, paused, isWorking, workLength, breakLength } = this.state;
+    // console.log('App Rendering!');
+    const { section, remaining, running, paused, isWorking, workLength, breakLength, timeUp } = this.state;
     return (
       <BrowserRouter>
         <Switch>
 
           <Route exact path='/' render={() =>
             <div className='container'>
+
               <Display
                 section={section}
                 remaining={this.formatTime(remaining)}
@@ -150,12 +157,10 @@ class App extends Component {
                 startCountDown={this.startCountDown}
                 onFinish={this.onFinish}
               />
-              <Link
-                to='/setting' 
-                className='setting-button'
-              >
+              <Link to='/setting' className='setting-button'>
                 Setting
               </Link>
+              {/* {(!timeUp) || <Sound onPlay={this.onPlay} />} */}
             </div>
           } />
 

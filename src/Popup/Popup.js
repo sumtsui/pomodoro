@@ -1,6 +1,7 @@
 import React from 'react';
 
 const Popup = ({onCancelClicked, onConfirmClicked }) => {
+  console.log('Popup Rendering!');
   return (
     <div className='alert'>
       <p>Saving change will reset the timer. Do you want to continue?</p>

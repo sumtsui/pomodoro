@@ -3,6 +3,7 @@ import Proptypes from 'prop-types';
 import {Link} from 'react-router-dom';
 
 const Control = ({running, pauseCountDown, endCountDown, paused, startCountDown, onFinish}) => {
+  // console.log('Control Rendering!');
   return (
     running ?
       <div className='button-running'>

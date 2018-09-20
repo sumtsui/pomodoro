@@ -29,6 +29,7 @@ class Setting extends Component {
   }
 
   render() {
+    console.log('Setting Rendering!');
     const {history, workLength, breakLength} = this.props;
     const {saveButtonClicked} = this.state;
     return (

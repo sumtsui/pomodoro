@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const Display = ({ section, remaining, isWorking }) => {
+  // console.log('Display Rendering!');
   return (
     <div className='display'>
       <h1>
