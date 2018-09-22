@@ -45,6 +45,12 @@ select {
   font-size:4.4em;
   margin-top: .4em;
 }
+.display.work span {
+  color: cornflowerblue;
+}
+.display.rest span {
+  color: palevioletred;
+}
 
 button {
   border: 1px solid black;
@@ -128,4 +134,8 @@ button[disabled] {
 .alert-action-buttons {
   display: flex;
   justify-content: center;
+}
+
+audio {
+  display: none
 }

@@ -3,20 +3,7 @@ import App from './App';
 import { shallow, mount } from 'enzyme';
 import Display from '../Display/Display';
 import Control from '../Control/Control';
-
-describe('Render', () => {
-  let wrapper;
-
-  beforeEach(() => {
-    wrapper = shallow(<App />);
-  })
-
-  it('should render a Display and Control component', () => {
-    expect(wrapper.containsMatchingElement(<Display />)).toEqual(true);
-    expect(wrapper.containsMatchingElement(<Control />)).toEqual(true);
-  })
-
-})
+import Sound from '../Sound/Sound';
 
 describe('Timer functionalities', () => {
   let wrapper;
@@ -45,13 +32,26 @@ describe('Timer functionalities', () => {
   it('only increments section count if a working section is finished', () => {
     wrapper.setState({isWorking: true})
     wrapper.instance().endCurrentCountDown();
-    expect(wrapper.state('section')).toEqual(1);
+    expect(wrapper.instance().section).toEqual(1);
   })
 
   it('automatically starts the next break/working section', () => {
     wrapper.instance().startCountDown();
     wrapper.instance().endCurrentCountDown();
     expect(wrapper.state('running')).toBe(true);
+    expect(wrapper.instance().intervalId).not.toBe(undefined);
+  })
+})
+
+describe('Alert', () => {
+  test('a Sound component should be rendered', () => {
+    const wrapper = mount(<App />);
+    expect(wrapper.find('Sound').length).toEqual(1);
+  })
+
+  it('should be triggered when alert prop is true', () => {
+    const wrapper = mount(<Sound alert={true}/>);
+    expect(wrapper.find('audio').length).toEqual(1);
   })
 })
 

@@ -1,12 +1,17 @@
-import React from 'react';
+import React, { Component } from 'react';
 
-const Sound = () => {
+class Sound extends Component {
 
-  return (
-    <div>
-      <audio src='./audio/bright-notification-tone-2.mp3' controls autoPlay/>
-    </div>
-  )
+  render() {
+    return (
+      this.props.alert ?
+      <div>
+        <audio src='./audio/tone-3.mp3' controls autoPlay/>
+      </div>
+      : 
+      <div></div>
+    )
+  }
 }
 
 export default Sound;

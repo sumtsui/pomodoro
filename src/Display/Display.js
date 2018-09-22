@@ -4,13 +4,13 @@ import PropTypes from 'prop-types';
 const Display = ({ section, remaining, isWorking }) => {
   // console.log('Display Rendering!');
   return (
-    <div className='display'>
+    <div className={`display ${isWorking ? 'work' : 'rest'}`}>
       <h1>
         {
           isWorking ?
           `Section ${section}`
           :
-          'Taking a break...'
+          'Take a break'
         }
       </h1>
       <span className='count-down'>{remaining}</span>

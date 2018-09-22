@@ -7,7 +7,7 @@ const Control = ({running, pauseCountDown, endCountDown, paused, startCountDown,
   return (
     running ?
       <div className='button-running'>
-        <button onClick={pauseCountDown}>{paused ? 'Continue' : 'Pause'}</button>
+        <button onClick={pauseCountDown} autoFocus={false}>{paused ? 'Continue' : 'Pause'}</button>
         <button onClick={endCountDown}>Skip</button>
         <Link to='/finish'>
           <button onClick={onFinish}>

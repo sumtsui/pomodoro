@@ -3,24 +3,24 @@ import Display from '../Display/Display';
 import Control from '../Control/Control';
 import Setting from '../Setting/Setting';
 import Finish from '../Finish/Finish';
-// import Sound from '../Sound/Sound';
+import Sound from '../Sound/Sound';
 import {BrowserRouter, Route, Link, Switch} from 'react-router-dom';
-import tone from '../assets/bright-notification-tone-2.mp3';
-
-const appTitle = 'Study';
 
 class App extends Component {
   
+  appTitle = 'Study';
+  workLength = 45 * 60;
+  breakLength = 10 * 60; 
+  section = 1;
+  autoStartNext = true;
+  muted = false;
+  alert = false;
+
   state = {
-    workLength: 45 * 60,
-    breakLength: 10 * 60,
-    running: false,
-    remaining: 0, // in seconds
-    paused: false,
-    section: 1,
-    intervalId: null,
-    isWorking: true,
-    // timeUp: false
+    running: false, // timer is running or not
+    remaining: 0, // count down remaning in seconds
+    paused: false,  // timer paused or not
+    isWorking: true,  // is working section or resting section
   }
 
   componentDidMount() {
@@ -28,10 +28,12 @@ class App extends Component {
   }
 
   componentWillUnmount() {
-    clearInterval(this.state.intervalId);
+    clearInterval(this.intervalId);
   }
 
   startCountDown = () => {
+    clearInterval(this.intervalId);
+    this.intervalId = setInterval(this.tick, 1000);
     this.setState({ running: true });
   }
 
@@ -41,48 +43,40 @@ class App extends Component {
 
   // setState() is async!!
   endCurrentCountDown = () => {
-    const {isWorking, section, breakLength, workLength} = this.state;
+    this.autoStartNext || clearInterval(this.intervalId);
+    const {isWorking} = this.state;
     this.setState({
-      isWorking: !isWorking, // toggle between working and resting
+      running: this.autoStartNext ? true : false,
+      isWorking: !isWorking, 
       paused: false, // in case user didn't unpause then press Skip button
-      // timeUp: true
     }, () => {
+      this.setState({ remaining: this.state.isWorking ? this.workLength : this.breakLength });
+      this.section = (this.state.isWorking) ? this.section + 1 : this.section;
       this.notify(this.state.isWorking);
-      this.setState({
-        section: (this.state.isWorking) ? section + 1 : section,
-        remaining: this.state.isWorking ? workLength : breakLength,
-      })
     });
   }
 
   reset = () => {
+    clearInterval(this.intervalId)
+    this.section = 1;
     this.setState({
-      intervalId: setInterval(this.tick, 1000),
-      remaining: this.state.workLength,
-      section: 1,
+      remaining: this.workLength,
       isWorking: true,
-      paused: false
+      paused: false,
+      running: false
     })
   }
 
   onFinish = () => {
-    this.setState({
-      running: false,
-      intervalId: clearInterval(this.state.intervalId)
-    })
+    this.setState({ running: false })
+    clearInterval(this.intervalId)
   }
 
   onSettingSave = (newWorkLength, newBreakLength) => {
-    this.setState({
-      workLength: newWorkLength,
-      breakLength: newBreakLength,
-      running: false,
-      section: 1,
-      isWorking: true
-    }, () => this.setState({
-      remaining: this.state.workLength
-    })
-  )}
+    this.workLength = newWorkLength;
+    this.breakLength = newBreakLength;
+    this.reset();
+  }
 
   tick = () => {
     if (!this.state.paused && this.state.running) {
@@ -105,38 +99,30 @@ class App extends Component {
   }
 
   notify = (isWorking) => {
-    const audio = new Audio(tone);
-    audio.play();
+    this.alert = true;
+    setTimeout(() => this.alert = false, 2000);
     let n;
-    document.title = '* ' + appTitle;
+    document.title = '* ' + this.appTitle;
     const options = {
       requireInteraction: true,
       onclick: () => console.log('click')
     };
-    const msg = (isWorking) ? 
-      'Let\'s do it' : 'Take a break';
-  // Check if the browser supports notifications
-    if (!("Notification" in window)) {
-      return alert("This browser does not support desktop notification");
-    }
-    // Let's check whether notification permissions have already been granted
-    if (Notification.permission === "granted") n = new Notification(msg, options);
-    // Ask the user for permission
+    const msg = (isWorking) ? 'Let\'s do it' : 'Take a break';
+    if (!("Notification" in window)) 
+      return console.log("This browser does not support desktop notification");
+    if (Notification.permission === "granted") 
+      n = new Notification(msg, options);
     else if (Notification.permission !== "denied") {
       Notification.requestPermission(function (permission) {
-        if (permission === "granted") n = new Notification(msg, options);
+        if (permission === "granted") 
+          n = new Notification(msg, options);
       });
     }
-    if (n) n.onclose = () => document.title = appTitle;
-  }
-
-  onPlay = () => {
-    this.setState({timeUp: false})
+    if (n) n.onclose = () => document.title = this.appTitle;
   }
 
   render() {
-    // console.log('App Rendering!');
-    const { section, remaining, running, paused, isWorking, workLength, breakLength, timeUp } = this.state;
+    const { remaining, running, paused, isWorking } = this.state;
     return (
       <BrowserRouter>
         <Switch>
@@ -145,7 +131,7 @@ class App extends Component {
             <div className='container'>
 
               <Display
-                section={section}
+                section={this.section}
                 remaining={this.formatTime(remaining)}
                 isWorking={isWorking}
               />
@@ -160,15 +146,16 @@ class App extends Component {
               <Link to='/setting' className='setting-button'>
                 Setting
               </Link>
-              {/* {(!timeUp) || <Sound onPlay={this.onPlay} />} */}
+              <Sound alert={this.alert} />
+
             </div>
           } />
 
           <Route path="/setting" render={props => 
             <Setting 
-              {...props} 
-              workLength={workLength}
-              breakLength={breakLength}
+              history={props.history}
+              workLength={this.workLength}
+              breakLength={this.breakLength}
               onSettingSave={this.onSettingSave}
             />} 
           />
@@ -176,7 +163,7 @@ class App extends Component {
           <Route path="/finish" render={props =>
             <Finish
               {...props}
-              section={section}
+              section={this.section}
               reset={this.reset}
             />}
           />

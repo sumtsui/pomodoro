@@ -18,7 +18,7 @@ describe('Render', () => {
 
   it('should render "Pause" and "End" buttons if the counter is running', () => {
     wrapper.setProps({running: true});
-    expect(wrapper.find('.button-running').text()).toEqual('PauseEnd')
+    expect(wrapper.find('.button-running').text()).toEqual('PauseSkip<Link />')
   })
 
   it('should render "Start" buttons if the counter is running', () => {
@@ -31,7 +31,7 @@ describe('Render', () => {
       running: true,
       paused: true
     });
-    expect(wrapper.find('.button-running').text()).toEqual('ContinueEnd');
+    expect(wrapper.find('.button-running').text()).toEqual('ContinueSkip<Link />');
   })
 })
 
