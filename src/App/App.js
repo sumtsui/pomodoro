@@ -44,13 +44,15 @@ class App extends Component {
   // setState() is async!!
   endCurrentCountDown = () => {
     this.autoStartNext || clearInterval(this.intervalId);
-    const {isWorking} = this.state;
+    const { isWorking } = this.state;
     this.setState({
       running: this.autoStartNext ? true : false,
       isWorking: !isWorking, 
-      paused: false, // in case user didn't unpause then press Skip button
+      paused: false,
     }, () => {
-      this.setState({ remaining: this.state.isWorking ? this.workLength : this.breakLength });
+      // setTimeout(() => {
+        this.setState({remaining: this.state.isWorking ? this.workLength : this.breakLength});
+      // }, 1000);
       this.section = (this.state.isWorking) ? this.section + 1 : this.section;
       this.notify(this.state.isWorking);
     });
@@ -81,7 +83,7 @@ class App extends Component {
   tick = () => {
     if (!this.state.paused && this.state.running) {
       this.setState({ remaining: this.state.remaining - 1 });
-      if (this.state.remaining === 0) {
+      if (this.state.remaining < 0) {
         this.endCurrentCountDown();
       }
     }
