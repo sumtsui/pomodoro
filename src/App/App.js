@@ -84,6 +84,8 @@ class App extends Component {
     this.autoStartNext = isAutoNext;
     this.isMuted = isMuted;
     this.reset();
+    localStorage.setItem('userSetWorkLength', this.workLength);
+    localStorage.setItem('userSetBreakLength', this.breakLength);
   }
 
   tick = () => {

@@ -46,6 +46,8 @@ class Setting extends Component {
           <Icon name='arrow left' size='large' />
         </a>
 
+        <h1>Setting</h1>
+
         <Select 
           className='setting-item'
           placeholder='Select work length' 
@@ -81,7 +83,7 @@ class Setting extends Component {
             onConfirmClicked={this.onConfirmClicked}
           />
           :
-          <Button onClick={this.onSaveClicked}>
+          <Button className='save' onClick={this.onSaveClicked}>
             Save
           </Button>
         }

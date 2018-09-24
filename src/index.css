@@ -91,6 +91,14 @@ button:hover {
   display: flex;
   flex-direction: column;
 }
+.setting-page h1 {
+  font-size: 1.4rem;
+  margin-top: 0;
+  margin-bottom: 2em;
+}
+.setting-page .save {
+  margin-top: 2em;
+}
 /* .setting-page label {
   display: flex
 } */
