@@ -13,7 +13,7 @@ body {
   justify-content: flex-start;
 }
 
-h1 {
+.display h1 {
   font-size: 1.4em;
   margin-top: 5em;
   font-weight: 300;
@@ -40,6 +40,8 @@ select {
 
 .display {
   text-align: center;
+  display: flex;
+  flex-direction: column;
 }
 .count-down {
   font-size:4.4em;
@@ -52,28 +54,21 @@ select {
   color: palevioletred;
 }
 
-button {
-  border: 1px solid black;
-  border-radius: 5px;
-  font-size: .8em;
-  margin: 4em 0;
-  padding: .5em 1em;
-}
 button:hover {
   cursor: pointer;
   box-shadow: .5px 1px 1px 1px rgba(0, 0, 0, 0.2);
 }
-button[disabled] {
+
+/* button[disabled] {
   border: 1px solid gray;
+} */
+
+.control {
+  margin: 4em;
 }
 
 .setting-button {
   margin-top: 8em;
-}
-
-.button-running button {
-  margin-left: 2em;
-  margin-right: 2em;
 }
 
 /* Setting Page */
@@ -82,29 +77,39 @@ button[disabled] {
   width: 70%;
   margin: auto;
 }
+.setting-page .setting-item {
+  margin-bottom: 2em;
+}
 .back-button {
   align-self: flex-start;
-  margin-bottom: 3.8em;
+  margin-bottom: 2em;
 }
 .back-button:hover {
   cursor: pointer;
 }
-.setting-page label {
+.setting-page .toggle-button-group {
+  display: flex;
+  flex-direction: column;
+}
+/* .setting-page label {
+  display: flex
+} */
+/* .setting-page label {
   margin-bottom: 2.4em;
   width: 100%;
 }
 .setting-page label div {
   flex: 1 auto  50%;
   margin-left: 2em;
-}
-.setting-page input {
+} */
+/* .setting-page input {
   width: 2em;
-}
-.setting-page input,
+} */
+/* .setting-page input,
 .setting-page div span {
   font-size: 2.4em;
 }
-.setting-page h3 {
+.setting-page p {
   font-size: 1.4em;
   font-weight: 300;
   margin: 0;
@@ -112,12 +117,7 @@ button[disabled] {
   text-align: right;
   margin-right: 1em;
   align-self: center;
-}
-#work-length,
-#break-length {
-  display: flex;
-  flex-direction: row;
-}
+} */
 
 .alert {
   /* border: 1px solid #DE507A; */

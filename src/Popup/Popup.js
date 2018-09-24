@@ -1,15 +1,16 @@
 import React from 'react';
+import {Message, Button} from 'semantic-ui-react'
 
 const Popup = ({onCancelClicked, onConfirmClicked }) => {
   console.log('Popup Rendering!');
   return (
-    <div className='alert'>
-      <p>Saving change will reset the timer. Do you want to continue?</p>
+    <Message>
+      <p>Saving change will reset the timer. Are you sure?</p>
       <div className='alert-action-buttons'>
-        <button onClick={onConfirmClicked}>Confirm</button>
-        <button onClick={onCancelClicked}>Cancel</button>
+        <Button onClick={onConfirmClicked}>Confirm</Button>
+        <Button onClick={onCancelClicked}>Cancel</Button>
       </div>
-    </div>
+    </Message>
   )
 }
 

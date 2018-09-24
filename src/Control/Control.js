@@ -1,27 +1,27 @@
 import React from 'react';
 import Proptypes from 'prop-types';
 import {Link} from 'react-router-dom';
+import { Button } from 'semantic-ui-react';
 
-const Control = ({running, pauseCountDown, endCountDown, paused, startCountDown, onFinish}) => {
-  // console.log('Control Rendering!');
+const Control = ({running, onPause, endCountDown, paused, startCountDown, onFinish}) => {
   return (
     running ?
-      <div className='button-running'>
-        <button onClick={pauseCountDown} autoFocus={false}>{paused ? 'Continue' : 'Pause'}</button>
-        <button onClick={endCountDown}>Skip</button>
+      <div className='control'>
+        <Button onClick={onPause}>{paused ? 'Continue' : 'Pause'}</Button>
+        <Button onClick={endCountDown}>Skip</Button>
         <Link to='/finish'>
-          <button onClick={onFinish}>
-            End
-          </button>
+          <Button onClick={onFinish}>
+            Finish
+          </Button>
         </Link>
       </div >
       :
-      <div>
-        <button
+      <div className='control'>
+        <Button
           className='start-button'
           onClick={startCountDown} >
           Start
-        </button>
+        </Button>
       </div>
   )
 }
@@ -29,7 +29,7 @@ const Control = ({running, pauseCountDown, endCountDown, paused, startCountDown,
 Control.prototype = {
   running: Proptypes.string.isRequired,
   paused: Proptypes.string.isRequired,
-  pauseCountDown: Proptypes.func.isRequired,
+  onPause: Proptypes.func.isRequired,
   endCountDown: Proptypes.func.isRequired,
   startCountDown: Proptypes.func.isRequired
 }

@@ -5,16 +5,18 @@ import Setting from '../Setting/Setting';
 import Finish from '../Finish/Finish';
 import Sound from '../Sound/Sound';
 import {BrowserRouter, Route, Link, Switch} from 'react-router-dom';
+import GithubCorner from 'react-github-corner';
+import {Icon} from 'semantic-ui-react';
 
 class App extends Component {
   
-  appTitle = 'Study';
-  workLength = 45 * 60;
-  breakLength = 10 * 60; 
+  tabTitle = 'Study';
+  workLength = localStorage.getItem('userSetWorkLength') || 25 * 60;
+  breakLength = localStorage.getItem('userSetBreakLength') || 5 * 60; 
   section = 1;
   autoStartNext = true;
-  muted = false;
-  alert = false;
+  isMuted = true;
+  alertSound = false;
 
   state = {
     running: false, // timer is running or not
@@ -25,6 +27,7 @@ class App extends Component {
 
   componentDidMount() {
     this.reset();
+    Notification.requestPermission();
   }
 
   componentWillUnmount() {
@@ -32,16 +35,18 @@ class App extends Component {
   }
 
   startCountDown = () => {
-    clearInterval(this.intervalId);
     this.intervalId = setInterval(this.tick, 1000);
     this.setState({ running: true });
   }
 
-  pauseCountDown = () => {
-    this.setState({ paused: !this.state.paused });
+  getMaxTime = (isWorking) => {
+    if (isWorking) {
+      return this.workLength;
+    } else {
+      return this.breakLength;
+    }
   }
 
-  // setState() is async!!
   endCurrentCountDown = () => {
     this.autoStartNext || clearInterval(this.intervalId);
     const { isWorking } = this.state;
@@ -49,13 +54,9 @@ class App extends Component {
       running: this.autoStartNext ? true : false,
       isWorking: !isWorking, 
       paused: false,
-    }, () => {
-      // setTimeout(() => {
-        this.setState({remaining: this.state.isWorking ? this.workLength : this.breakLength});
-      // }, 1000);
-      this.section = (this.state.isWorking) ? this.section + 1 : this.section;
-      this.notify(this.state.isWorking);
+      remaining: this.getMaxTime(!isWorking)
     });
+    this.section = (!this.state.isWorking) ? this.section + 1 : this.section;
   }
 
   reset = () => {
@@ -69,58 +70,60 @@ class App extends Component {
     })
   }
 
-  onFinish = () => {
-    this.setState({ running: false })
-    clearInterval(this.intervalId)
+  onPause = () => {
+    this.setState({paused: !this.state.paused});
   }
 
-  onSettingSave = (newWorkLength, newBreakLength) => {
-    this.workLength = newWorkLength;
-    this.breakLength = newBreakLength;
+  onFinish = () => {
+    this.setState({ running: false })
+  }
+
+  onSettingSave = (newWorkLength, newBreakLength, isAutoNext, isMuted) => {
+    this.workLength = newWorkLength ? newWorkLength * 60 : this.workLength;
+    this.breakLength = newBreakLength ? newBreakLength * 60 : this.breakLength;
+    this.autoStartNext = isAutoNext;
+    this.isMuted = isMuted;
     this.reset();
   }
 
   tick = () => {
-    if (!this.state.paused && this.state.running) {
-      this.setState({ remaining: this.state.remaining - 1 });
-      if (this.state.remaining < 0) {
+    const { paused, running, remaining, isWorking } = this.state;
+    if (!paused && running) {
+      let newTime = remaining - 1;
+      this.setState({ remaining: newTime });
+      document.title = this.formatTime(remaining) + ' ' + this.tabTitle;
+      if (remaining <= 0) {
         this.endCurrentCountDown();
+        this.notify(!isWorking);
       }
     }
   }
 
   formatTime = (timeInSeconds) => {
     const milliSec = timeInSeconds * 1000;
-    let hours = Math.floor((milliSec % (1000 * 60 * 60 * 24) / (1000 * 60 * 60)));
+    // let hours = Math.floor((milliSec % (1000 * 60 * 60 * 24) / (1000 * 60 * 60)));
     let minutes = Math.floor((milliSec % (1000 * 60 * 60) / (1000 * 60)));
     let seconds = Math.floor((milliSec % (1000 * 60) / (1000)));
-    !(hours < 10) || (hours = `0${hours}`);
+    // !(hours < 10) || (hours = `0${hours}`);
     !(minutes < 10) || (minutes = `0${minutes}`);
     !(seconds < 10) || (seconds = `0${seconds}`);
-    return `${hours}:${minutes}:${seconds}`;
+    return `${minutes}:${seconds}`;
   }
 
   notify = (isWorking) => {
-    this.alert = true;
-    setTimeout(() => this.alert = false, 2000);
-    let n;
-    document.title = '* ' + this.appTitle;
+    if (!("Notification" in window)) return null;
+    if (this.isMuted === false) {
+      this.alertSound = true;
+      setTimeout(() => this.alertSound = false, 2000);
+    }
+    document.title = '* ' + this.tabTitle;
     const options = {
       requireInteraction: true,
-      onclick: () => console.log('click')
+      body: (isWorking) ? 'Let\'s do this' : 'You deserve it :)'
     };
-    const msg = (isWorking) ? 'Let\'s do it' : 'Take a break';
-    if (!("Notification" in window)) 
-      return console.log("This browser does not support desktop notification");
-    if (Notification.permission === "granted") 
-      n = new Notification(msg, options);
-    else if (Notification.permission !== "denied") {
-      Notification.requestPermission(function (permission) {
-        if (permission === "granted") 
-          n = new Notification(msg, options);
-      });
-    }
-    if (n) n.onclose = () => document.title = this.appTitle;
+    const msg = (isWorking) ? 'Start working!' : 'Go relax';
+    let notification = new Notification(msg, options);
+    notification.onclose = () => document.title = this.tabTitle;
   }
 
   render() {
@@ -132,6 +135,11 @@ class App extends Component {
           <Route exact path='/' render={() =>
             <div className='container'>
 
+              <GithubCorner
+                href="https://github.com/sumtsui/pomodoro"
+                bannerColor="#272727"
+                octoColor="white"
+              />
               <Display
                 section={this.section}
                 remaining={this.formatTime(remaining)}
@@ -140,15 +148,15 @@ class App extends Component {
               <Control 
                 running={running}
                 paused={paused}
-                pauseCountDown={this.pauseCountDown}
+                onPause={this.onPause}
                 endCountDown={this.endCurrentCountDown}
                 startCountDown={this.startCountDown}
                 onFinish={this.onFinish}
               />
               <Link to='/setting' className='setting-button'>
-                Setting
+                <Icon name='setting' size='large' />
               </Link>
-              <Sound alert={this.alert} />
+              <Sound alert={this.alertSound} />
 
             </div>
           } />
@@ -159,6 +167,8 @@ class App extends Component {
               workLength={this.workLength}
               breakLength={this.breakLength}
               onSettingSave={this.onSettingSave}
+              autoStartNext={this.autoStartNext}
+              isMuted={this.isMuted}
             />} 
           />
 

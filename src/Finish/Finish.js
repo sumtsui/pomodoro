@@ -1,4 +1,5 @@
 import React from 'react';
+import {Message, Button} from 'semantic-ui-react'
 
 const Finish = ({section, history, reset}) => {
   return (
@@ -9,15 +10,15 @@ const Finish = ({section, history, reset}) => {
         </h1>
         <span className='count-down'>Done!</span>
       </div>
-      <div>
-        <button
+      <div className='control'>
+        <Button
           className='start-button'
           onClick={() => {
             history.goBack();
             reset();
           }}>
           Restart
-          </button>
+          </Button>
       </div>
     </div>
   )
