@@ -39,7 +39,7 @@ class App extends Component {
   startCountDown = () => {
     this.intervalId = setInterval(this.tick, 1000);
     this.setState({ running: true });
-    this.tabTitle = 'Work';
+    this.tabTitle = (this.state.isWorking) ? 'Work' : 'Rest';
   }
 
   getMaxTime = (isWorking) => {
