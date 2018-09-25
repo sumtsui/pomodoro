@@ -14,9 +14,10 @@ class App extends Component {
   workLength = localStorage.getItem('userSetWorkLength') || 25 * 60;
   breakLength = localStorage.getItem('userSetBreakLength') || 5 * 60; 
   section = 1;
-  autoStartNext = true;
-  isMuted = true;
   alertSound = false;
+
+  autoStartNext = localStorage.getItem('isAutoNext') === null ? true : getBool(localStorage.getItem('isAutoNext'));
+  isMuted = localStorage.getItem('isMuted') === null ? false : getBool(localStorage.getItem('isMuted'));
 
   state = {
     running: false, // timer is running or not
@@ -26,6 +27,7 @@ class App extends Component {
   }
 
   componentDidMount() {
+    console.log('isAutoNext', localStorage.getItem('isAutoNext'));
     this.reset();
     Notification.requestPermission();
   }
@@ -86,6 +88,8 @@ class App extends Component {
     this.reset();
     localStorage.setItem('userSetWorkLength', this.workLength);
     localStorage.setItem('userSetBreakLength', this.breakLength);
+    localStorage.setItem('isMuted', this.isMuted);
+    localStorage.setItem('isAutoNext', this.autoStartNext);
   }
 
   tick = () => {
@@ -186,6 +190,12 @@ class App extends Component {
       </BrowserRouter>
     )
   }
+}
+
+function getBool(value) {
+  if (value === 'true') return true;
+  else if (value === 'false') return false;
+  return value
 }
 
 export default App;
