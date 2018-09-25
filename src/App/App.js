@@ -10,7 +10,7 @@ import {Icon} from 'semantic-ui-react';
 
 class App extends Component {
   
-  tabTitle = 'Study';
+  tabTitle = 'Pomodoro';
   workLength = localStorage.getItem('userSetWorkLength') || 25 * 60;
   breakLength = localStorage.getItem('userSetBreakLength') || 5 * 60; 
   section = 1;
@@ -39,6 +39,7 @@ class App extends Component {
   startCountDown = () => {
     this.intervalId = setInterval(this.tick, 1000);
     this.setState({ running: true });
+    this.tabTitle = 'Work';
   }
 
   getMaxTime = (isWorking) => {
@@ -59,6 +60,8 @@ class App extends Component {
       remaining: this.getMaxTime(!isWorking)
     });
     this.section = (!this.state.isWorking) ? this.section + 1 : this.section;
+    this.tabTitle = (!this.state.isWorking) ? 'Work' : 'Rest';
+    document.title = this.tabTitle;
   }
 
   reset = () => {
@@ -78,6 +81,7 @@ class App extends Component {
 
   onFinish = () => {
     this.setState({ running: false })
+    document.title = 'Pomodoro';
   }
 
   onSettingSave = (newWorkLength, newBreakLength, isAutoNext, isMuted) => {
@@ -96,8 +100,9 @@ class App extends Component {
     const { paused, running, remaining, isWorking } = this.state;
     if (!paused && running) {
       let newTime = remaining - 1;
-      this.setState({ remaining: newTime });
-      document.title = this.formatTime(remaining) + ' ' + this.tabTitle;
+      this.setState({ remaining: newTime }, () => {
+        document.title = this.tabTitle + ' ' + this.formatTime(this.state.remaining);
+      });
       if (remaining <= 0) {
         this.endCurrentCountDown();
         this.notify(!isWorking);

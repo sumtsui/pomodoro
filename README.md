@@ -1,3 +1,3 @@
-my first attempt to apply test driven development to my work.
+Built with React and Semantic UI.
 
-try the app out here: https://study-timer.herokuapp.com/
+
