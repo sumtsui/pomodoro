@@ -40,6 +40,7 @@ class App extends Component {
     this.intervalId = setInterval(this.tick, 1000);
     this.setState({ running: true });
     this.tabTitle = (this.state.isWorking) ? 'Work' : 'Rest';
+    document.title = this.tabTitle + ' ' + this.formatTime(this.state.remaining);
   }
 
   getMaxTime = (isWorking) => {
@@ -58,10 +59,11 @@ class App extends Component {
       isWorking: !isWorking, 
       paused: false,
       remaining: this.getMaxTime(!isWorking)
+    }, () => {
+      this.tabTitle = (this.state.isWorking) ? 'Work' : 'Rest';
+      document.title = this.tabTitle + ' ' + this.formatTime(this.state.remaining);
     });
-    this.section = (!this.state.isWorking) ? this.section + 1 : this.section;
-    this.tabTitle = (!this.state.isWorking) ? 'Work' : 'Rest';
-    document.title = this.tabTitle;
+    this.section = (!isWorking) ? this.section + 1 : this.section;
   }
 
   reset = () => {
@@ -127,14 +129,12 @@ class App extends Component {
       this.alertSound = true;
       setTimeout(() => this.alertSound = false, 2000);
     }
-    document.title = '* ' + this.tabTitle;
     const options = {
       requireInteraction: true,
       body: (isWorking) ? 'Let\'s do this' : 'You deserve it :)'
     };
     const msg = (isWorking) ? 'Start working!' : 'Go relax';
-    let notification = new Notification(msg, options);
-    notification.onclose = () => document.title = this.tabTitle;
+    new Notification(msg, options);
   }
 
   render() {
